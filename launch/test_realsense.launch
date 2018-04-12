@@ -1,0 +1,8 @@
+<launch>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find robot_eyes)/gazebo_worlds/test.sdf"/>
+    <arg name="headless" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="verbose" value="true"/>
+  </include>
+</launch>
