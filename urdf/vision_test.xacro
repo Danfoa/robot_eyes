@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!--INFORMATION:
+-->
+<robot name="test_with_realsense_rs200" xmlns:xacro="http://ros.org/wiki/xacro">
+ 
+  <!--Base frame for reference-->
+  <link name="base_link" />
+
+  <link name="color"/>
+
+  <link name="realsense_rs200">
+    <visual>
+      <base_link rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://robot_eyes/meshes/realsense.dae"/>
+      </geometry>
+    </visual>
+    <!--<collision>
+      <base_link rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://robot_eyes/meshes/realsense.dae"/>
+      <material name="yellow"/>
+    </collision>-->
+  </link>
+
+  <!--Reference Gripper to base joint -->
+  <joint name="realsense_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="realsense_rs200" />
+    <origin xyz="0 0 1.5" rpy="0 0.5 0"/>
+  </joint>
+
+  <joint name="realsense_color_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="color" />
+    <origin xyz="0 0 1.6" rpy="-2.09979 0.0 -1.57"/>
+  </joint>
+</robot>
