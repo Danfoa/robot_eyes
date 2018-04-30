@@ -126,10 +126,11 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include ${catkin_INCLUDE_DIRS}
-# include
-# ${catkin_INCLUDE_DIRS}
+  include ${catkin_INCLUDE_DIRS} ${PCL_INCLUDE_DIRS}
 )
+
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -152,6 +153,9 @@ target_link_libraries(example ${catkin_LIBRARIES})
 add_executable(example_voxelgrid src/example_voxelgrid.cpp)
 add_dependencies(example_voxelgrid ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(example_voxelgrid ${catkin_LIBRARIES}
+
+add_executable(segmentation src/segmentation.cpp)
+target_link_libraries (planar_segmentation ${PCL_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
