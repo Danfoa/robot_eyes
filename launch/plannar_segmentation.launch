@@ -6,6 +6,6 @@
 
     <include file="$(find robot_eyes)/launch/depth_img_processing.launch"/>
 
-    <node pkg="robot_eyes" type="example_voxelgrid" name="example_voxelgrid" 
-        args="input:=/realsense/camera/depth_registered/points"/>
+    <!--<node pkg="robot_eyes" type="segmentation" name="segmentation" 
+        args="input:=/realsense/camera/depth_registered/points"/>-->
 </launch>

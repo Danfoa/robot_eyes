@@ -146,16 +146,17 @@ add_definitions(${PCL_DEFINITIONS})
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/robot_eyes_node.cpp)
-add_executable(example src/example.cpp)
+add_executable(example src/examples/example.cpp)
 add_dependencies(example ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(example ${catkin_LIBRARIES})
 
-add_executable(example_voxelgrid src/example_voxelgrid.cpp)
+add_executable(example_voxelgrid src/examples/example_voxelgrid.cpp)
 add_dependencies(example_voxelgrid ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(example_voxelgrid ${catkin_LIBRARIES}
+target_link_libraries(example_voxelgrid ${catkin_LIBRARIES})
 
-add_executable(segmentation src/segmentation.cpp)
-target_link_libraries (planar_segmentation ${PCL_LIBRARIES})
+add_executable(simple_plane_segmentation src/examples/simple_plane_segmentation.cpp)
+add_dependencies(example_voxelgrid ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries (simple_plane_segmentation ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -222,4 +223,3 @@ target_link_libraries (planar_segmentation ${PCL_LIBRARIES})
 
 
 
-)
