@@ -6,6 +6,6 @@
 
     <include file="$(find robot_eyes)/launch/depth_img_processing.launch"/>
 
-    <!--<node pkg="robot_eyes" type="segmentation" name="segmentation" 
-        args="input:=/realsense/camera/depth_registered/points"/>-->
+    <node pkg="robot_eyes" type="plane_segmenter" name="plane_segmenter" 
+        args="input:=/realsense/camera/depth_registered/points" output="screen"/>
 </launch>
