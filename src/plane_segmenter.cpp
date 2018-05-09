@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-
+#include <vector>
 // Point cloud message definition
 #include <sensor_msgs/PointCloud2.h>
 // PCL specific includes
@@ -15,26 +15,31 @@
 #include <pcl/segmentation/sac_segmentation.h>
 // Logging capabilities
 #include <ros/console.h>
+// Robot_eyes messages
+#include <robot_eyes/segmented_cloud.h>
 
-#include <vector>
 
 //Forward declarations
 void print_model_coefficients(pcl::ModelCoefficients::Ptr);
-void color_cloud(pcl::PointIndices::Ptr, pcl::PointCloud<pcl::PointXYZRGB>::Ptr);
+void color_cloud(pcl::PointIndices::Ptr, pcl::PointCloud<pcl::PointXYZRGB>::Ptr, uint8_t, uint8_t, uint8_t);
 
 // Global ros publisher instances
-ros::Publisher pub;
+ros::Publisher pub_segmented;     // Publisher or cloud segemented inliers array.
 
-
-// Callback for the cloud_msg topic 
+/* 
+segment: This method is the callback method from a subscriber to a PointCloud2 topic. I will mantain the structure/order
+            of the input pointcloud while searching for plane components using RANSAC algorithm to fit plannar models.
+  **Parameters
+    - cloud_msg: PointCloud2 message containing the pointcloud to process 
+*/
 void segment(const sensor_msgs::PointCloud2ConstPtr& cloud_msg){
   ROS_DEBUG("Plane_Segmenter: Processing new cloud...");
   // Container for original to segment.
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
 
-  // Vector containing an array of inliers for each plane found
-  std::vector<pcl::PointIndices> plane_models_inliers;
+  // Msg containing an array of inliers for each plane found
+  robot_eyes::segmented_cloud segmented_cloud_msg;
 
   // Convert to PCL PointCloud<PointXYZRGB> since the SAC segmentation API does not work with PCL::PCLPointCloud2
   // and we dont want to loose the color information.
@@ -70,7 +75,9 @@ void segment(const sensor_msgs::PointCloud2ConstPtr& cloud_msg){
     ROS_DEBUG("Plane model found: -id: %d -inliers: %d", model_found, num_inliers);
     print_model_coefficients(coefficients);
     // Save plane inliers for publishing.
-    plane_models_inliers.push_back(*inliers);
+    robot_eyes::inliers_indices indices_msg;
+    indices_msg.inliers = inliers->indices;
+    segmented_cloud_msg.segmented_inliers.push_back(indices_msg);
     // Remove the planar inliers, extract the rest.
     pcl::ExtractIndices<pcl::PointXYZRGB> extract;
     extract.setKeepOrganized(true);                   // Replace inliners for NaN (not chanching the cloud structure)
@@ -79,24 +86,18 @@ void segment(const sensor_msgs::PointCloud2ConstPtr& cloud_msg){
     extract.setNegative(true);
     extract.filter(*cloud_segmented);
     model_found++;
-    remaining_points -= num_inliers;                  // Account for inliers points.
-    inliers->indices.clear();
-    // Color original cloud for visualization purposes. (Should be removed when running for realtime operation)
-    color_cloud(inliers,cloud);
-    break;
+    remaining_points -= num_inliers;                   // Account for inliers points.
+    inliers->indices.clear();    
   }
 
-  // Convert to ROS data type
-  sensor_msgs::PointCloud2 output;
-  pcl::toROSMsg(*cloud, output);
-  // Publish the data
-  pub.publish (output);
-  ROS_DEBUG("Publishing segmented cloud");
+  segmented_cloud_msg.cloud = *cloud_msg;              // Re link original cloud.
+  pub_segmented.publish (segmented_cloud_msg);         // Publish cloud and model inliers.
+  ROS_DEBUG("Publishing segmented cloud and inliers array");
 }
 
 int main (int argc, char** argv){
   // Initialize ROS
-  ros::init (argc, argv, "simple_plane_segmentation");
+  ros::init (argc, argv, "Plannar_Segmentator");
   ros::NodeHandle nh;
 
   // Change console log level to DEBUG. (Optional)
@@ -104,33 +105,20 @@ int main (int argc, char** argv){
     ros::console::notifyLoggerLevelsChanged();
   }
   
-  ROS_INFO("Plane segmentation Node initiaded");
-  
   // Create a ROS subscriber for the input point cloud
-  // Use the previously defined callback to manage the subsctiption to the mesages.
   ros::Subscriber sub = nh.subscribe<sensor_msgs::PointCloud2> ("input", 1, segment);
-  ROS_DEBUG("Subscribed to PointCloud2 messages");
 
-  // Create a ROS publisher for the output point cloud
-  pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
-  ROS_DEBUG("Publisher of segmented pointcloud");
+  // Create a ROS publisher for the segmented_cloud
+  pub_segmented = nh.advertise<robot_eyes::segmented_cloud> ("output", 1);
 
   // Spin
   ros::spin ();
 }
 
+/*Small function for printing the plane model paramters found*/
 void print_model_coefficients(pcl::ModelCoefficients::Ptr coefficients){
   ROS_DEBUG("Plane Model coefficients: [x:%.3f, y:%.3f, z:%.3f, d:%.3f]",
                                                              coefficients->values[0] , coefficients->values[1] ,
                                                              coefficients->values[2] , coefficients->values[3]);
 }
 
-void color_cloud(pcl::PointIndices::Ptr inliers, pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud){
-  // Color all inliers of the detected plane.
-  for(int inlier_point = 0; inlier_point < inliers->indices.size(); inlier_point++){
-    // Create RGB color code.
-    uint32_t rgb = (static_cast<uint32_t>(rand() % 255) | static_cast<uint32_t>(rand() % 255) | static_cast<uint32_t>(rand() % 255));
-    // Color point.
-    cloud->points[inliers->indices[inlier_point]].rgb = *reinterpret_cast<float*>(&rgb);
-  }
-}

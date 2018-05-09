@@ -39,11 +39,12 @@ find_package(catkin REQUIRED
 ## * In this file (CMakeLists.txt):
 ##   * add "message_generation" and every package in MSG_DEP_SET to
 find_package(catkin REQUIRED COMPONENTS
-  message_generation
     roscpp
     pcl_conversions
     pcl_ros
     sensor_msgs
+    std_msgs 
+    message_generation
 )
 ##   * add "message_runtime" and every package in MSG_DEP_SET to
 ##     catkin_package(CATKIN_DEPENDS ...)
@@ -54,7 +55,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
 add_message_files(FILES
-  segmented_indices.msg
+  inliers_indices.msg
+  segmented_cloud.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -72,8 +74,10 @@ add_message_files(FILES
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(DEPENDENCIES
+generate_messages(
+  DEPENDENCIES
   std_msgs
+  sensor_msgs
 )
 
 ################################################
@@ -106,17 +110,18 @@ generate_messages(DEPENDENCIES
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  CATKIN_DEPENDS
-  message_runtime
+   CATKIN_DEPENDS
+   message_runtime
 #  INCLUDE_DIRS include
 #  LIBRARIES robot_eyes
-#  CATKIN_DEPENDS other_catkin_pkg
+   CATKIN_DEPENDS message_runtime
    DEPENDS 
    roscpp
    rospy
    pcl_ros
    pcl_conversions
    sensor_msgs
+
 )
 
 ###########
@@ -161,6 +166,11 @@ target_link_libraries (simple_plane_segmentation ${PCL_LIBRARIES} ${catkin_LIBRA
 add_executable(plane_segmenter src/plane_segmenter.cpp)
 add_dependencies(plane_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries (plane_segmenter ${PCL_LIBRARIES} ${catkin_LIBRARIES})
+
+add_executable(cloud_colorer src/cloud_colorer.cpp)
+add_dependencies(cloud_colorer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries (cloud_colorer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -223,6 +233,3 @@ target_link_libraries (plane_segmenter ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-
-
-

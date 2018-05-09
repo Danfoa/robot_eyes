@@ -8,7 +8,7 @@
 
   <link name="color"/>
 
-  <link name="realsense_rs200">
+  <link name="realsense_rs200">catkin_male
     <visual>
       <base_link rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
@@ -33,6 +33,6 @@
   <joint name="realsense_color_joint" type="fixed">
     <parent link="base_link" />
     <child link="color" />
-    <origin xyz="0 0 1.6" rpy="-2.09979 0.0 -1.57"/>
+    <origin xyz="0 -0.046 1.5004 " rpy="-2.070796 0 -1.570796"/>
   </joint>
 </robot>
