@@ -13,6 +13,11 @@ void generateClusterColor(int);
 ros::Publisher pub;
 std::vector<uint32_t> cluster_color_array;
 
+/* colorCloud: This method is used as callback for the main subscriber of the `cloud_colorer` node, 
+              the topic to which this method responds to uses message of type `robot_eyes::segmented_cloud`,
+              and uses the cluster inliers to color the cloud to visualize clusters graphically.
+              
+*/
 void colorCloud(const robot_eyes::segmented_cloud segmented_cloud){
   // Container for original to segment.
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
