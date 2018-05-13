@@ -103,14 +103,16 @@ void segment(const sensor_msgs::PointCloud2ConstPtr& cloud_msg){
 
 int main (int argc, char** argv){
   // Initialize ROS
-  ros::init (argc, argv, "Plannar_Segmentator");
+  ros::init (argc, argv, "plane_segmenter");
   ros::NodeHandle nh;
 
-  std::string key;
-  if (nh.searchParam("max_models", key)){
-    nh.getParam(key, max_models);
-    ROS_ERROR("Plannar Segmentator: Searching for %d plane components", max_models);
-  }
+  ros::param::param<int>("/plane_segmenter/max_models", max_models, -1);
+  ROS_ERROR("Plannar Segmentator: Searching for %d plane components", max_models);
+  
+
+  // // ROS_ERROR(key);
+  // max_models = 3;
+  // 
   ROS_WARN_COND( max_models != -1 , "Plannar Segmentator: Searching for %d plane components", max_models);
 
   // Change console log level to DEBUG. (Optional)
