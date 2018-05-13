@@ -233,3 +233,19 @@ target_link_libraries (cloud_colorer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(region_growing_segmenter
+  src/region_growing_segmenter.cpp
+)
+add_dependencies(region_growing_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(region_growing_segmenter
+  ${catkin_LIBRARIES}
+)
+
+add_executable(cilinder_segmenter
+  src/cylinder_segmenter.cpp
+)
+add_dependencies(cilinder_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(cilinder_segmenter
+  ${catkin_LIBRARIES}
+)

@@ -35,6 +35,7 @@ segment: This method is the callback method from a subscriber to a PointCloud2 t
     - cloud_msg: PointCloud2 message containing the pointcloud to process 
 */
 void segment(const sensor_msgs::PointCloud2ConstPtr& cloud_msg){
+  ROS_DEBUG("Plane_Segmenter: Processing new cloud...");
   // Container for original to segment.
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_segmented (new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -106,12 +107,9 @@ int main (int argc, char** argv){
   ros::init (argc, argv, "Plannar_Segmentator");
   ros::NodeHandle nh;
 
-  std::string key;
-  if (nh.searchParam("max_models", key)){
-    nh.getParam(key, max_models);
-    ROS_ERROR("Plannar Segmentator: Searching for %d plane components", max_models);
-  }
-  ROS_WARN_COND( max_models != -1 , "Plannar Segmentator: Searching for %d plane components", max_models);
+  // Get the max number of models to find, by default the Node will search for as much models as possible.
+  nh.param<int>("max_models", max_models, -1);
+  ROS_INFO_COND( max_models != -1 , "Cylinder Segmentator: Searching for %d plane components", max_models);
 
   // Change console log level to DEBUG. (Optional)
   if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) {

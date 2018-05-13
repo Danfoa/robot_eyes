@@ -1,6 +1,6 @@
 # Robot Eyes
 
-(Work in progress...)
+(Work in progress...see [Wiki](https://github.com/Danfoa/robot_eyes/wiki/) for further documentation))
 
 This package intents to create a modular system for RGB-D and/or RGB image processing, integrating state of the art research and vision frameworks like PCL.
 

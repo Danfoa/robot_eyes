@@ -54,6 +54,7 @@ int main (int argc, char** argv){
   ros::spin ();
 }
 
+
 /* generateClusterColor: This method populates a vector of rgb colors ordered for the incomming clusters,
                          mantaining the color for the clusters if they come in the same order, for example
                          if cluster 1 is a table and 2 is a chair, meanwhile the ordet of the incomming clusters

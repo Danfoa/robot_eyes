@@ -1,6 +1,6 @@
 <launch>
     
-    <arg name="colored_cloud" default="false"/>
+    <arg name="colored_cloud" default="true"/>
 
     <include file="$(find robot_eyes)/launch/gazebo_test_scenareo.launch">
         <arg name="gui" value="false"/>
@@ -10,7 +10,9 @@
 
     <node pkg="robot_eyes" type="plane_segmenter" name="plane_segmenter" 
         args="input:=/realsense/camera/depth_registered/points
-              output:=/robot_eyes/plane_segmented_cloud" output="screen"/>
+              output:=/robot_eyes/plane_segmented_cloud
+              max_models:='2'"
+              output="screen"/>
 
     <group if="$(arg colored_cloud)">
         <node pkg="robot_eyes" type="cloud_colorer" name="cloud_colorer"
