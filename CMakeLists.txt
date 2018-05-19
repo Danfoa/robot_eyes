@@ -163,13 +163,25 @@ add_executable(simple_plane_segmentation src/examples/simple_plane_segmentation.
 add_dependencies(example_voxelgrid ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries (simple_plane_segmentation ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 
-add_executable(plane_segmenter src/plane_segmenter.cpp)
+add_executable(plane_segmenter src/segmentation/plane_segmenter.cpp)
 add_dependencies(plane_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries (plane_segmenter ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 
-add_executable(cloud_colorer src/cloud_colorer.cpp)
+add_executable(region_growing_segmenter src/segmentation/region_growing_segmenter.cpp)
+add_dependencies(region_growing_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(region_growing_segmenter  ${catkin_LIBRARIES})
+
+add_executable(cylinder_segmenter src/segmentation/cylinder_segmenter.cpp)
+add_dependencies(cylinder_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(cylinder_segmenter ${catkin_LIBRARIES})
+
+add_executable(cloud_colorer src/common/cloud_colorer.cpp)
 add_dependencies(cloud_colorer ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries (cloud_colorer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
+
+add_executable(euclidian_segmenter src/segmentation/euclidian_segmenter.cpp)
+add_dependencies(euclidian_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries (euclidian_segmenter ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -234,18 +246,3 @@ target_link_libraries (cloud_colorer ${PCL_LIBRARIES} ${catkin_LIBRARIES})
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(region_growing_segmenter
-  src/region_growing_segmenter.cpp
-)
-add_dependencies(region_growing_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(region_growing_segmenter
-  ${catkin_LIBRARIES}
-)
-
-add_executable(cilinder_segmenter
-  src/cylinder_segmenter.cpp
-)
-add_dependencies(cilinder_segmenter ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(cilinder_segmenter
-  ${catkin_LIBRARIES}
-)

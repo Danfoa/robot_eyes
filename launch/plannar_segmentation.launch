@@ -1,19 +1,28 @@
 <launch>
     
+    <env name="ROSCONSOLE_FORMAT" value="[${severity}] [${node}]: ${message}"/>
+
     <arg name="colored_cloud" default="true"/>
     <arg name="max_models" default="4"/>
+
     <include file="$(find robot_eyes)/launch/gazebo_test_scenareo.launch">
         <arg name="gui" value="false"/>
     </include>
 
     <include file="$(find robot_eyes)/launch/depth_img_processing.launch"/>
 
-    <node pkg="robot_eyes" type="plane_segmenter" name="plane_segmenter" 
+    <node pkg="robot_eyes" type="plane_segmenter" name="plane_segmenter" output="screen"
         args="input:=/realsense/camera/depth_registered/points
-              output:=/robot_eyes/plane_segmented_cloud _max_models:=3"  
-              output="screen">
-        <param name="max_models" type="int" value="$(arg max_models)"/>
+              output:=/robot_eyes/plane_segmented_cloud">
+        <param name="max_models" type="int" value="5"/>
     </node>
+
+    <!--<node pkg="robot_eyes" type="cylinder_segmenter" name="cylinder_segmenter" 
+        args="input:=/realsense/camera/depth_registered/points
+              output:=/robot_eyes/plane_and_cylinder_segmented_cloud"  
+              output="screen">
+        <param name="max_models" type="int" value="1"/>
+    </node>-->
 
     <group if="$(arg colored_cloud)">
         <node pkg="robot_eyes" type="cloud_colorer" name="cloud_colorer"

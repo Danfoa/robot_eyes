@@ -12,7 +12,7 @@
     <visual>
       <base_link rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://robot_eyes/meshes/realsense.dae"/>
+        <mesh filename="package://realsense_gazebo_plugin/models/realsense_camera/meshes/realsense.dae"/>
       </geometry>
     </visual>
     <!--<collision>
