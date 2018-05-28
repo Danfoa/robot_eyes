@@ -22,6 +22,5 @@
     <remap from="depth_registered/image_rect" to="$(arg depReg_imgrect)"/>
     <remap from="depth_registered/points" to="$(arg out_cloud)"/>
   </node>
-  
-  <include file="$(find robot_eyes)/launch/test_simple_robot_scenareo.launch"/>
+
 </launch>

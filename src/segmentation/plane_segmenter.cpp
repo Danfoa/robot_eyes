@@ -42,6 +42,7 @@ void findInliers(robot_eyes::segmented_cloud *segmented_cloud_msg, pcl::SACSegme
   // Holder for model inliers and coefficients.
   pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients); // Create intance of a geometric model coefficients
   pcl::PointIndices::Ptr inliers (new pcl::PointIndices);                // inliner indices in the cloud structure.
+  const std::vector<pcl::PointIndices> found_clusters;
   
   int model_found = 1;
   int num_points = (int) cloud->points.size();
@@ -59,10 +60,7 @@ void findInliers(robot_eyes::segmented_cloud *segmented_cloud_msg, pcl::SACSegme
     ROS_DEBUG("Plane model found: -id: %d -inliers: %d", model_found, num_inliers);
     print_model_coefficients(coefficients);
     // Save plane inliers for publishing.
-    robot_eyes::inliers_indices indices_msg;
-    indices_msg.inliers = inliers->indices;
-    // indices_msg.cluster_id = MODEL_TYPE + std::to_string(model_found);
-    segmented_cloud_msg->segmented_inliers.push_back(indices_msg);
+    // segmented_cloud_msg->clusters.push_back(*inliers);
     // Remove the planar inliers, extract the rest.
     pcl::ExtractIndices<pcl::PointXYZRGB> extract;
     extract.setKeepOrganized(true);                    // Replace inliners for NaN (not chanching the cloud structure)
@@ -109,7 +107,7 @@ void segment(const sensor_msgs::PointCloud2ConstPtr& cloud_msg){
   // Find all plannar models in input cloud.
   findInliers( &segmented_cloud_msg , seg, max_models);
 
-  ROS_DEBUG("Clusters found : %d", (int) segmented_cloud_msg.segmented_inliers.size() );
+  ROS_DEBUG("Clusters found : %d", (int) segmented_cloud_msg.clusters.size() );
   pub_segmented.publish (segmented_cloud_msg);         // Publish cloud and model inliers.
   ROS_DEBUG("Publishing segmented cloud and inliers array");
 }

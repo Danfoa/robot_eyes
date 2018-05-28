@@ -54,8 +54,8 @@ int main (int argc, char** argv){
   // Create a ROS subscriber for the input point cloud
   ros::Subscriber sub = nh.subscribe ("input", 1, colorCloud);
   // Create a ROS publisher for the output point cloud
-  std::string output_topic = "input" + std::string("/cluster_colored");
-  pub = nh.advertise<sensor_msgs::PointCloud2> (output_topic, 1);
+  ROS_DEBUG("Publishing to output")
+  pub = nh.advertise<sensor_msgs::PointCloud2> ("output", 1);
   // Spin
   ros::spin ();
 }

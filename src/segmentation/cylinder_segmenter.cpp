@@ -32,6 +32,18 @@ int findInliers(robot_eyes::segmented_cloud *segmented_cloud_msg, int max_models
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
   pcl::fromROSMsg(segmented_cloud_msg->cloud, *cloud); 
 
+  // Remove the points already labeled as clusters by past segmentator nodes, assuming they are not cylinders.
+  std::vector<robot_eyes::inliers_indices> inliers = segmented_cloud_msg.segmented_inliers;
+  pcl::ExtractIndices<pcl::PointXYZRGB> extract;
+  extract.setKeepOrganized(true); 
+  extract.setNegative(true);
+  extract.setInputCloud(cloud);
+  for(std::vector<robot_eyes::inliers_indices>::iterator cluster = inliers.begin(); cluster != inliers.end(); cluster++){
+    ROS_DEBUG("Pre processing: removing already segmented cluster with %d inliers", cluster->inliers.size());
+    extract.setIndices(cluster->inliers);
+    extract.filter(*cloud);
+  }
+  
   // Estimate point normals
   pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;    // Create the normal estimation class, and pass the input dataset to it       
     // Create an empty kdtree representation, and pass it to the normal estimation object.
@@ -106,16 +118,6 @@ void pos_segment(const robot_eyes::segmented_cloud segmented_cloud){
   robot_eyes::segmented_cloud segmented_cloud_msg = segmented_cloud;
   ROS_DEBUG("Post segmenting: Finding cylinder components");
 
-  // // Remove the points already labeled as clusters by past segmentator nodes.
-  // std::vector<robot_eyes::inliers_indices> inliers = segmented_cloud.segmented_inliers;
-  // pcl::ExtractIndices<pcl::PointXYZRGB> extract;
-  // extract.setKeepOrganized(true); 
-  // extract.setNegative(true);
-  // extract.setInputCloud(cloud);
-  // for(std::vector<robot_eyes::inliers_indices>::iterator cluster = inliers.begin(); cluster != inliers.end(); cluster++){
-  //   extract.setIndices(cluster->inliers);
-  //   extract.filter(*segmented_cloud_msg.cloud);
-  // }
   // Find all cylinder models in input cloud.
   findInliers( &segmented_cloud_msg , max_models);
   
