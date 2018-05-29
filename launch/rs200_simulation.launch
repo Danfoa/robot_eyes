@@ -6,18 +6,20 @@
 	<!--LAUNCH PAREMTERS -->
 	<arg name="gazebo_gui" default="false" doc="Parameter to determine whether to show Gazebo GUI, disable for performance"/>
 
-	<!-- Launch simulation scene on gazebo -->
-	<include file="$(find gazebo_ros)/launch/empty_world.launch">
-    	<arg name="world_name" value="$(find robot_eyes)/config/gazebo_worlds/test.sdf"/>
-		<arg name="headless" value="true"/>
-		<arg name="gui" value="$(arg gazebo_gui)"/>
- 	</include>
+
 
 	<!-- ROBOT DEPENDANT SECTION ********************************************************************  -->
 	<!-- In this section you must publish the ros parameter `robot_description` with the address to the robot .urdf 
 		or .xacro descrioption, since it will be used by gazebo to simulate the robot                                -->
 	<param name="robot_description" command="$(find xacro)/xacro.py '$(find robot_eyes)/urdf/rs200_simulation.xacro'" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />	
+
+	<!-- Launch simulation scene on gazebo -->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+    	<arg name="world_name" value="$(find robot_eyes)/config/gazebo_worlds/tabletop.sdf"/>
+		<arg name="headless" value="true"/>
+		<arg name="gui" value="$(arg gazebo_gui)"/>
+ 	</include>
 
 	<!-- Spawn a robot into Gazebo -->
 	<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model realsense-rs200" />
